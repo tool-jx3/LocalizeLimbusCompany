@@ -22,7 +22,7 @@ public static class LoadingManager
 
 	public static void InitLoadingTexts()
 	{
-		_loadingTexts = [.. File.ReadAllLines(LLCMod.ModPath + "/Localize/Readme/LoadingTexts.md")];
+		_loadingTexts = [.. File.ReadAllLines(LLCMod.ModPath + "/Localize/Utils/LoadingTexts.md")];
 		for (var i = 0; i < _loadingTexts.Count; i++)
 		{
 			var loadingText = _loadingTexts[i];

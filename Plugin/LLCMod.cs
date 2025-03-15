@@ -65,7 +65,7 @@ public class LLCMod : BasePlugin
 		{
 			if (ChineseSetting.IsUseChinese.Value)
 			{
-				Manager.InitLocalizes(new DirectoryInfo(ModPath + "/Localize/CN"));
+				Manager.InitLocalizes(new DirectoryInfo(ModPath + "/Localize/HANT"));
 				Harmony.PatchAll(typeof(ChineseFont));
 				Harmony.PatchAll(typeof(ReadmeManager));
 				Harmony.PatchAll(typeof(LoadingManager));

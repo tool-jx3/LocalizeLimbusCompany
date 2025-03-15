@@ -129,7 +129,7 @@ public class UpdaterPatcher : BasePatcher
 			if (Version.Parse(appOldVersion) < Version.Parse(tag))
 			{
 				LogInfo("New mod version found. Download full mod.");
-				var updatelog = $"LimbusLocalize_BIE_v{tag}.7z";
+				var updatelog = $"LimbusLocalize_BIE_v{tag}.zip";
 				var downloadUri = UpdateUri == NodeType.GitHub
 					? $"https://github.com/SmallYuanSY/LocalizeLimbusCompany/releases/download/v{tag}/{updatelog}"
 					: string.Format(UrlDictionary[UpdateUri], updatelog);
@@ -144,7 +144,7 @@ public class UpdaterPatcher : BasePatcher
 			else if (latestTextVersion > localTextVersion)
 			{
 				LogInfo("New text resource found. Download resource.");
-				var updatelog = $"LimbusLocalize_Resource_{latestTextVersion}.7z";
+				var updatelog = $"LimbusLocalize_Resource_{latestTextVersion}.zip";
 				var downloadUri = UpdateUri == NodeType.GitHub
 					? $"https://github.com/SmallYuanSY/LLC_Release/releases/download/{latestTextVersion}/{updatelog}"
 					: string.Format(UrlDictionary[UpdateUri], "Resource/" + updatelog);
@@ -193,13 +193,13 @@ public class UpdaterPatcher : BasePatcher
 				string downloadUri;
 				if (UpdateUri == NodeType.GitHub)
 				{
-					updatelog = $"tmpchinesefont_BIE_{latestReleaseTag}.7z";
+					updatelog = $"tmpchinesefont_BIE_{latestReleaseTag}.zip";
 					downloadUri =
 						$"https://github.com/SmallYuanSY/LLC_ChineseFontAsset/releases/download/{latestReleaseTag}/{updatelog}";
 				}
 				else
 				{
-					updatelog = "tmpchinesefont_BIE.7z";
+					updatelog = "tmpchinesefont_BIE.zip";
 					downloadUri = string.Format(UrlDictionary[UpdateUri], updatelog);
 				}
 

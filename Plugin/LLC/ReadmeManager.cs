@@ -84,7 +84,7 @@ public static class ReadmeManager
 	{
 		ReadmeSprites = new Dictionary<string, Sprite>();
 
-		foreach (var fileInfo in new DirectoryInfo(LLCMod.ModPath + "/Localize/Readme").GetFiles()
+		foreach (var fileInfo in new DirectoryInfo(LLCMod.ModPath + "/Localize/Utils").GetFiles()
 			         .Where(f => f.Extension is ".jpg" or ".png"))
 		{
 			Texture2D texture2D = new(2, 2);
@@ -103,7 +103,7 @@ public static class ReadmeManager
 	public static void InitReadmeList()
 	{
 		ReadmeList.Clear();
-		foreach (var notices in JSONNode.Parse(File.ReadAllText(LLCMod.ModPath + "/Localize/Readme/Readme.json"))[0]
+		foreach (var notices in JSONNode.Parse(File.ReadAllText(LLCMod.ModPath + "/Localize/Utils/Readme.json"))[0]
 			         .AsArray.m_List)
 			ReadmeList.Add(HandleDynamicType(notices.ToString()));
 	}
@@ -156,7 +156,7 @@ public static class ReadmeManager
 		{
 			var lastUpdateTimeText =
 				Client.GetStringAsync("https://smallyuansy.github.io/LocalizeLimbusCompany_TW/LatestUpdateTime.txt").GetAwaiter().GetResult();
-			var filePath = LLCMod.ModPath + "/Localize/Readme/Readme.json";
+			var filePath = LLCMod.ModPath + "/Localize/Utils/Readme.json";
 			var lastWriteTime = new FileInfo(filePath).LastWriteTime;
 			if (lastWriteTime >= DateTime.Parse(lastUpdateTimeText))
 				return;
