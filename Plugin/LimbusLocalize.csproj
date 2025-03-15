@@ -27,6 +27,15 @@
         <Reference Include="Assembly-CSharp">
             <HintPath>..\lib\Assembly-CSharp.dll</HintPath>
         </Reference>
+        <Reference Include="BepInEx.Core">
+          <HintPath>..\lib\BepInEx.Core.dll</HintPath>
+        </Reference>
+        <Reference Include="BepInEx.Preloader.Core">
+          <HintPath>..\lib\BepInEx.Preloader.Core.dll</HintPath>
+        </Reference>
+        <Reference Include="BepInEx.Unity.IL2CPP">
+          <HintPath>..\lib\BepInEx.Unity.IL2CPP.dll</HintPath>
+        </Reference>
         <Reference Include="ProjectMoon.DelegateCollection">
             <HintPath>..\lib\ProjectMoon.DelegateCollection.dll</HintPath>
         </Reference>

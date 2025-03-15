@@ -239,7 +239,7 @@ public static class ChineseFont
 
 		if (!Manager.Localizes.TryGetValue(scenarioID, out var text))
 		{
-			LLCMod.LogError("Story Error!Can'n Find HANT Story File,Use Raw EN Story");
+			LLCMod.LogError("Story Error!Can'n Find CN Story File,Use Raw EN Story");
 			text = AddressableManager.Instance
 				.LoadAssetSync<TextAsset>("Assets/Resources_moved/Localize/en/StoryData", "EN_" + scenarioID).Item1
 				.ToString();

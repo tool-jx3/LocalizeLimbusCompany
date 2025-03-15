@@ -4,16 +4,57 @@ using HarmonyLib;
 using MainUI;
 using TMPro;
 using UnityEngine.UI;
+using UnityEngine;
+using Il2CppSystem.Collections.Generic;
+using System.IO;
+using System.Linq;
 
 namespace LimbusLocalize.LLC;
 
+public static class SpriteLoader
+{
+	public static Dictionary<string, Sprite> ReadmeSprites = new() ;
+	static SpriteLoader()
+	{
+		InitReadmeSprites();
+	}
+	private static void InitReadmeSprites()
+	{
+		try{
+			string spritepath = Path.Combine(LLCMod.ModPath,"Localize/Utils");
+			LLCMod.LogInfo($"Loading Sprites from {LLCMod.ModPath}");
+		
+			foreach (var file in new DirectoryInfo(spritepath).GetFiles().Where(f => f.Extension is ".jpg" or ".png"))
+			{
+				Texture2D texture = new(2, 2);
+				ImageConversion.LoadImage(texture, File.ReadAllBytes(file.FullName));
+				var sprite = Sprite.Create(texture, new Rect(0f, 0f, texture.width, texture.height),
+					new Vector2(0.5f, 0.5f));
+				string spriteName = Path.GetFileNameWithoutExtension(file.Name);
+				texture.name = spriteName;
+				sprite.name = spriteName;
+				Object.DontDestroyOnLoad(sprite);
+				sprite.hideFlags |= HideFlags.HideAndDontSave;
+				ReadmeSprites[spriteName] = sprite;
+			}	
+		}catch(DirectoryNotFoundException ex){
+			LLCMod.LogError($"DirectoryMissing: {ex.Message}");
+		}catch(IOException ex){
+			LLCMod.LogError($"FileRead Error: {ex.Message}");
+		}
+		
+	}
+}
 public static class UIImproved
 {
 	[HarmonyPatch(typeof(ParryingTypoUI), nameof(ParryingTypoUI.SetParryingTypoData))]
 	[HarmonyPrefix]
 	private static void ParryingTypoUI_SetParryingTypoData(ParryingTypoUI __instance)
 	{
-		__instance.img_parryingTypo.sprite = ReadmeManager.ReadmeSprites["LLC_Combo"];
+		if (SpriteLoader.ReadmeSprites.TryGetValue("LLC_Combo",out Sprite combo))
+		{
+			__instance.img_parryingTypo.sprite = combo;
+		}
 	}
 
 	[HarmonyPatch(typeof(ActBossBattleStartUI), nameof(ActBossBattleStartUI.Init))]
@@ -24,7 +65,10 @@ public static class UIImproved
 		var tmp = textGroup.GetChild(1).GetComponentInChildren<TextMeshProUGUI>();
 		if (!tmp.text.Equals("Proelium Fatale"))
 			return;
-		textGroup.GetChild(1).GetComponentInChildren<Image>().sprite = ReadmeManager.ReadmeSprites["LLC_BossBattle"];
+		if (SpriteLoader.ReadmeSprites.TryGetValue("LLC_BossBattle",out Sprite BossBattle))
+		{
+			textGroup.GetChild(1).GetComponentInChildren<Image>().sprite = BossBattle;
+		}
 		tmp.font = ChineseFont.Tmpchinesefonts[1];
 		tmp.text = "<b>命定之戰</b>";
 		tmp = textGroup.GetChild(2).GetComponentInChildren<TextMeshProUGUI>();
