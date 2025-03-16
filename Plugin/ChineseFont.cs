@@ -74,6 +74,10 @@ public static class ChineseFont
 	[HarmonyPostfix]
 	private static void UpdateTMP(TextMeshProLanguageSetter __instance)
 	{
+		if (__instance._text.font.name == "ExcelsiorSans SDF")
+		{
+			return;
+		}
 		__instance._text.font = Tmpchinesefonts[0];
 		if (__instance._text.overflowMode == TextOverflowModes.Ellipsis)
 			__instance._text.overflowMode = TextOverflowModes.Overflow;
