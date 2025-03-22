@@ -1,0 +1,78 @@
+name: dotnet package
+
+on:
+  pull_request:
+    branches:
+      - main
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup dotnet
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 8.0.x
+          cache: true
+          cache-dependency-path: ./**/packages.lock.json
+
+      - name: Display dotnet version
+        run: dotnet --version
+
+      - run: dotnet restore --locked-mode
+
+      - name: Build
+        run: dotnet build LimbusLocalize.sln
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: LTM_arch_temp
+          path: Release/
+
+  release:
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    needs: build
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Get current date
+        id: date
+        run: echo "tag=$(date +'%Y%m%d')" >> $GITHUB_ENV
+
+      - name: Generate full_hash
+        id: hash
+        run: |
+          TIMESTAMP_HASH=$(date -u +%s | sha256sum | head -c 3)
+          COMMIT_HASH=$(git log -1 --pretty=format:%h | head -c 3)
+          FULL_HASH="${TIMESTAMP_HASH}${COMMIT_HASH}"
+          echo "full_hash=$FULL_HASH" >> $GITHUB_ENV
+          echo "Generated full_hash: $FULL_HASH"
+
+      - name: Download Artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: LTM_arch_temp
+          path: Release/
+
+      - name: Compress to zip
+        run: cd Release && zip -r "LTM_arch_${{ env.tag }}_${{ env.full_hash }}.zip" BepInEx
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ env.tag }}
+          name: Release ${{ env.tag }}
+          body: |
+            - v${{ env.tag }} arch update
+            - Build Hash: ${{ env.full_hash }}
+          draft: false
+          prerelease: false
+          files: "Release/LTM_arch_${{env.tag}}_${{env.full_hash}}.zip"
