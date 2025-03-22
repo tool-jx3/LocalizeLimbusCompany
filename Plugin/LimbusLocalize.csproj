@@ -94,4 +94,12 @@
             <HintPath>..\lib\UnityEngine.UnityWebRequestModule.dll</HintPath>
         </Reference>
     </ItemGroup>
+
+    <Target Name="CopyCustomFiles" AfterTargets="AfterBuild">
+        <ItemGroup>
+            <FilesToCopy Include="Utils\*" />
+        </ItemGroup>
+        <Copy SourceFiles="@(FilesToCopy)" DestinationFiles="@(FilesToCopy->'$(OutDir)Localize\%(RelativeDir)%(Filename)%(Extension)')" />
+    </Target>
+
 </Project>
