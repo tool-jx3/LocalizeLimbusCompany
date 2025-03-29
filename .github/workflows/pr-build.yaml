@@ -1,0 +1,51 @@
+name: PR build and artifact
+
+on:
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup dotnet
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 8.0.x
+          cache: true
+          cache-dependency-path: ./**/packages.lock.json
+
+      - run: dotnet restore --locked-mode
+
+      - name: Build
+        run: dotnet build LimbusLocalize.sln
+
+      - name: Get current date
+        id: date
+        run: echo "tag=$(date +'%Y%m%d')" >> $GITHUB_ENV
+
+      - name: Get Short PR Commit Hash
+        run: |
+          SHORT_COMMIT=$(echo "${{ github.event.pull_request.head.sha }}" | cut -c1-7)
+          echo "SHORT_COMMIT=$SHORT_COMMIT" >> $GITHUB_ENV
+          echo "Short PR Commit: $SHORT_COMMIT"
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: LTM_arch_temp_${{ env.tag }}_${{ env.SHORT_COMMIT }}
+          path: Release/
+
+      - name: Get PR Number
+        id: pr
+        run: echo "PR_NUMBER=${{ github.event.pull_request.number }}" >> $GITHUB_ENV
+
+      - name: Comment on PR with Artifact Link
+        run: |
+          ARTIFACT_URL="https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+          gh pr comment ${{ env.PR_NUMBER }} --body "✅ Build completed! Download the ${{ env.tag }}_${{ env.SHORT_COMMIT }} artifact [here]($ARTIFACT_URL)."
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
